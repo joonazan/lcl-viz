@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use std::cell::RefCell;
 use std::convert::TryInto;
 use std::rc::Rc;
@@ -15,9 +16,10 @@ pub fn start() -> Result<(), JsValue> {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
 
-    let nodes: [[Element; 8]; 8] = (0..8)
+    const N: usize = 25;
+    let nodes: [[Element; N]; N] = (0..N)
         .map(|_| {
-            (0..8)
+            (0..N)
                 .map(|_| document.create_element("div").unwrap())
                 .collect::<Vec<_>>()
                 .try_into()
@@ -40,24 +42,21 @@ pub fn start() -> Result<(), JsValue> {
     document.body().unwrap().append_child(&container)?;
 
     let color_names = ["a", "b", "c"];
+    let mut rng = rand::rngs::StdRng::seed_from_u64(0);
 
     let closure = Rc::new(RefCell::new(None));
     let closure2 = closure.clone();
 
-    let mut frame = 0;
+    for y in 0..N {
+        for x in 0..N {
+            let color = (x ^ y) & 1;
+            nodes[y][x].set_class_name(color_names[color]);
+        }
+    }
 
     *closure2.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        for y in 0..8 {
-            for x in 0..8 {
-                let color = if ((y * 8 + x) ^ frame) & 0b111111 == 0 {
-                    2
-                } else {
-                    (x ^ y) & 1
-                };
-                nodes[y][x].set_class_name(color_names[color]);
-            }
-        }
-        frame += 1;
+        nodes[rng.gen_range(0..N)][rng.gen_range(0..N)]
+            .set_class_name(color_names[rng.gen_range(0..3)]);
 
         requestAnimationFrame(closure.borrow().as_ref().unwrap());
     }) as Box<dyn FnMut()>));
