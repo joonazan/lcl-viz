@@ -58,22 +58,23 @@ pub fn start() -> Result<(), JsValue> {
 
     let vertices = (0..N).flat_map(|x| (0..N).map(move |y| (x, y)));
 
-    for p in vertices.clone() {
-        let (x, y) = p;
-        g[p] = ((x ^ y) & 1) as u8;
+    {
+        let mut order = vertices.clone().collect::<Vec<_>>();
+        order.shuffle(&mut rng);
+        for &p in &order {
+            g[p] = smallest_color(&g, p);
+        }
     }
 
     *closure2.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        for _ in 0..10 {
-            loop {
-                let p = (rng.gen_range(0..N), rng.gen_range(0..N));
-                let old = g[p];
-                g[p] = rng.gen_range(0..5);
-                if G::neighbors(p).all(|p2| g[p2] != g[p]) {
-                    break;
-                }
-                g[p] = old;
+        loop {
+            let p = (rng.gen_range(0..N), rng.gen_range(0..N));
+            let old = g[p];
+            g[p] = rng.gen_range(0..5);
+            if G::neighbors(p).all(|p2| g[p2] != g[p]) {
+                break;
             }
+            g[p] = old;
         }
 
         let mut g2 = g.clone();
