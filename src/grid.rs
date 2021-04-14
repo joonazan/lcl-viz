@@ -1,8 +1,9 @@
 use std::ops::{Index, IndexMut};
 
+#[derive(Clone)]
 pub struct Grid<T, const N: usize>(pub [[T; N]; N]);
 
-type Coord = (usize, usize);
+pub type Coord = (usize, usize);
 
 impl<T, const N: usize> Grid<T, N>
 where

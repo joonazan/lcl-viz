@@ -1,5 +1,5 @@
 use rand::prelude::*;
-use rand::seq::IteratorRandom;
+use rand::seq::{IteratorRandom, SliceRandom};
 use std::cell::RefCell;
 use std::convert::TryInto;
 use std::rc::Rc;
@@ -7,19 +7,21 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::Element;
 mod grid;
-use grid::Grid;
+use grid::*;
 
 #[wasm_bindgen]
 extern "C" {
     fn requestAnimationFrame(closure: &Closure<dyn FnMut()>) -> u32;
 }
 
+const N: usize = 25;
+type G = Grid<u8, N>;
+
 #[wasm_bindgen]
 pub fn start() -> Result<(), JsValue> {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
 
-    const N: usize = 25;
     let nodes: Grid<Element, N> = Grid(
         (0..N)
             .map(|_| {
@@ -46,56 +48,63 @@ pub fn start() -> Result<(), JsValue> {
     }
     document.body().unwrap().append_child(&container)?;
 
-    let color_names = ["a", "b", "c"];
+    let color_names = ["a", "b", "c", "d", "e"];
     let mut rng = rand::rngs::StdRng::seed_from_u64(0);
 
     let closure = Rc::new(RefCell::new(None));
     let closure2 = closure.clone();
 
-    let mut g = Grid::<u8, N>::new();
+    let mut g = G::new();
 
-    for y in 0..N {
-        for x in 0..N {
-            let color = (x ^ y) & 1;
-            g[(x, y)] = color as u8;
-            nodes[(x, y)].set_class_name(color_names[color]);
-        }
+    let vertices = (0..N).flat_map(|x| (0..N).map(move |y| (x, y)));
+
+    for p in vertices.clone() {
+        let (x, y) = p;
+        g[p] = ((x ^ y) & 1) as u8;
     }
 
     *closure2.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        let mut p;
-        let mut p2;
-        let mut c;
-        let mut c2;
-        loop {
-            p = (rng.gen_range(0..N), rng.gen_range(0..N));
-            p2 = Grid::<u8, N>::neighbors(p).choose(&mut rng).unwrap();
-
-            c = rng.gen_range(0..3);
-            c2 = rng.gen_range(0..3);
-
-            let old = g[p];
-            let old2 = g[p2];
-
-            g[p] = c;
-            g[p2] = c2;
-
-            if Grid::<u8, N>::neighbors(p).all(|n| g[n] != g[p])
-                && Grid::<u8, N>::neighbors(p2).all(|n| g[n] != g[p2])
-            {
-                break;
+        for _ in 0..10 {
+            loop {
+                let p = (rng.gen_range(0..N), rng.gen_range(0..N));
+                let old = g[p];
+                g[p] = rng.gen_range(0..5);
+                if G::neighbors(p).all(|p2| g[p2] != g[p]) {
+                    break;
+                }
+                g[p] = old;
             }
-
-            g[p] = old;
-            g[p2] = old2;
         }
 
-        nodes[p].set_class_name(color_names[c as usize]);
-        nodes[p2].set_class_name(color_names[c2 as usize]);
+        let mut g2 = g.clone();
+        let mut change = true;
+        while change {
+            change = false;
+            for p in vertices.clone() {
+                let c = smallest_color(&g2, p);
+                if c != g2[p] {
+                    change = true;
+                }
+                g2[p] = c;
+            }
+        }
+
+        for p in vertices.clone() {
+            nodes[p].set_class_name(color_names[g2[p] as usize]);
+        }
 
         requestAnimationFrame(closure.borrow().as_ref().unwrap());
     }) as Box<dyn FnMut()>));
     requestAnimationFrame(closure2.borrow().as_ref().unwrap());
 
     Ok(())
+}
+
+fn smallest_color<const N: usize>(g: &Grid<u8, N>, p: Coord) -> u8 {
+    for c in 0.. {
+        if G::neighbors(p).all(|x| g[x] != c) {
+            return c;
+        }
+    }
+    unreachable!()
 }

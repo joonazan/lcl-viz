@@ -9,13 +9,19 @@ $cells-per-row: 25;
     padding-bottom: 1/$cells-per-row * 100%;
 }
 .row > .a {
-    background-color: #222222;
+    background-color: #BBBBBB;
 }
 .row > .b {
     background-color: white;
 }
 .row > .c {
-    background-color: cyan;
+    background-color: #222222;
+}
+.row > .d {
+    background-color: magenta;
+}
+.row > .e {
+    background-color: yellow;
 }
 
 .container {
