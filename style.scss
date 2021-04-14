@@ -25,5 +25,5 @@ $cells-per-row: 25;
 }
 
 .container {
-    width: 80%;
+    width: min(90vw, 90vh);
 }
