@@ -19,8 +19,7 @@ type G = Grid<u8, N>;
 
 #[wasm_bindgen]
 pub fn start() -> Result<(), JsValue> {
-    let window = web_sys::window().unwrap();
-    let document = window.document().unwrap();
+    let document = web_sys::window().unwrap().document().unwrap();
 
     let nodes: Grid<Element, N> = Grid(
         (0..N)
