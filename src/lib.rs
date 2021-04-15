@@ -66,6 +66,11 @@ pub fn start() -> Result<(), JsValue> {
         }
     }
 
+    for p in vertices.clone() {
+        nodes[p].set_class_name(color_names[g[p] as usize]);
+    }
+    let mut view_state = g.clone();
+
     *closure2.borrow_mut() = Some(Closure::wrap(Box::new(move || {
         loop {
             let p = (rng.gen_range(0..N), rng.gen_range(0..N));
@@ -89,7 +94,11 @@ pub fn start() -> Result<(), JsValue> {
         }
 
         for p in vertices.clone() {
-            nodes[p].set_class_name(color_names[g2[p] as usize]);
+            let c = g2[p];
+            if view_state[p] != c {
+                nodes[p].set_class_name(color_names[c as usize]);
+                view_state[p] = c;
+            }
         }
 
         requestAnimationFrame(closure.borrow().as_ref().unwrap());
