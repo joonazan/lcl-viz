@@ -78,14 +78,12 @@ pub fn start() -> Result<(), JsValue> {
         }
 
         let mut g2 = g.clone();
-        let mut change = true;
-        while change {
-            change = false;
+        for i in 0..5 {
             for p in vertices.clone() {
-                let c = smallest_color(&g2, p);
-                if c != g2[p] {
-                    change = true;
+                if g2[p] != i {
+                    continue;
                 }
+                let c = smallest_color(&g2, p);
                 g2[p] = c;
             }
         }
