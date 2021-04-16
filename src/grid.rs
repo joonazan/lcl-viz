@@ -25,6 +25,10 @@ impl<T, const N: usize> Grid<T, N> {
             .map(move |x| (x, y))
             .chain(one_axis(y).map(move |y| (x, y)))
     }
+
+    pub fn vertices() -> impl Iterator<Item = Coord> {
+        (0..N).flat_map(|x| (0..N).map(move |y| (x, y)))
+    }
 }
 
 impl<T, const N: usize> Index<Coord> for Grid<T, N> {
