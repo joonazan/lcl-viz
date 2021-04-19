@@ -1,3 +1,5 @@
+/* five-coloring */
+
 $cells-per-row: 25;
 
 .row {
@@ -26,4 +28,35 @@ $cells-per-row: 25;
 
 .container {
     width: min(90vw, 90vh);
+}
+
+/* Necklace */
+
+#necklace .bead {
+    border-radius: 50%;
+    border: 1px solid black;
+    width: 2em;
+    height: 2em;
+    text-align: center;
+}
+
+#necklace .bead[data-color="A"] {
+    background-color: var(--color1);
+}
+
+#necklace .bead[data-color="B"] {
+    background-color: var(--color2);
+}
+
+#necklace .chain {
+    display: flex;
+}
+
+#necklace .edge {
+    margin: 1em 0;
+    width: 1em;
+    border: 1px solid black;
+}
+#necklace .edge:first-child, #necklace .edge:last-child {
+    border-style: dashed;
 }
