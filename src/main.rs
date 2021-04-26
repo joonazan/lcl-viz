@@ -13,8 +13,7 @@ extern "C" {
     fn requestAnimationFrame(closure: &Closure<dyn FnMut()>) -> u32;
 }
 
-#[wasm_bindgen]
-pub fn start() -> Result<(), JsValue> {
+pub fn main() {
     let document = web_sys::window().unwrap().document().unwrap();
 
     let mut rng = rand::rngs::StdRng::seed_from_u64(0);
@@ -22,7 +21,7 @@ pub fn start() -> Result<(), JsValue> {
     document
         .body()
         .unwrap()
-        .append_child(&necklace::create(&document))?;
+        .append_child(&necklace::create(&document)).unwrap();
 
     let closure = Rc::new(RefCell::new(None));
     let closure2 = closure.clone();
@@ -31,6 +30,4 @@ pub fn start() -> Result<(), JsValue> {
         requestAnimationFrame(closure.borrow().as_ref().unwrap());
     }) as Box<dyn FnMut()>));
     requestAnimationFrame(closure2.borrow().as_ref().unwrap());
-
-    Ok(())
 }

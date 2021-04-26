@@ -4,9 +4,6 @@ version = "0.1.0"
 authors = ["Joonatan Saarhelo <joonatan.saarhelo@aalto.fi>"]
 edition = "2018"
 
-[lib]
-crate-type = ["cdylib"]
-
 [dependencies]
 js-sys = "0.3.50"
 wasm-bindgen = {version = "0.2.73", features = ["nightly"]}
