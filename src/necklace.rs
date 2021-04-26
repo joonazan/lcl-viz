@@ -21,7 +21,7 @@ pub fn create(document: &Document) -> Rc<HtmlElement> {
             document,
             container.clone(),
             "--color1",
-            "#000000",
+            "#9be54d",
         ))
         .unwrap();
     container
@@ -29,7 +29,7 @@ pub fn create(document: &Document) -> Rc<HtmlElement> {
             document,
             container.clone(),
             "--color2",
-            "#FFFFFF",
+            "#383cc0",
         ))
         .unwrap();
 
@@ -81,15 +81,17 @@ fn make_necklace(
         bead
     };
 
-    if !open_start {
-        bead();
-    }
+    let beads = if !open_start {
+        Some(bead())
+    } else {
+        None
+    };
 
-    let beads = (0..n - if open_start { 0 } else { 1 })
+    let beads = beads.into_iter().chain((0..n - if open_start { 0 } else { 1 })
         .map(|_| {
             edge();
             bead()
-        })
+        }))
         .collect::<Vec<_>>();
 
     if open_end {
