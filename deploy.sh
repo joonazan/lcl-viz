@@ -1,5 +1,3 @@
 rm dist/*
-yarn run parcel build index.html
-rm dist/*.toml
-rm dist/*.map
+trunk build --release
 aws s3 cp dist/ s3://lcl-viz --recursive
