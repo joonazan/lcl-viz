@@ -40,16 +40,40 @@ $cells-per-row: 25;
     text-align: center;
 }
 
-#necklace .bead[data-color="A"] {
+#necklace *[data-color="A"] {
     background-color: var(--color1);
 }
 
-#necklace .bead[data-color="B"] {
+#necklace *[data-color="B"] {
     background-color: var(--color2);
+}
+
+#necklace .highlight {
+    box-shadow: 0 0 1em red;
+}
+
+#necklace .colorbutton {
+    height: 2em;
+    width: 2em;
+    vertical-align: middle;
 }
 
 #necklace .chain {
     display: flex;
+}
+
+#necklace .rotate {
+    transform: rotate(180deg);
+    animation: 3s rotate;
+    animation-timing-function: cubic-bezier(0.8, 0.1, 0.5, 0.0);
+    animation-delay: 1s;
+    animation-fill-mode: both;
+    width: min-content;
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(180deg);}
 }
 
 #necklace .edge {

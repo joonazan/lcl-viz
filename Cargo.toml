@@ -5,6 +5,7 @@ authors = ["Joonatan Saarhelo <joonatan.saarhelo@aalto.fi>"]
 edition = "2018"
 
 [dependencies]
+yew = "0.17"
 js-sys = "0.3.50"
 wasm-bindgen = {version = "0.2.73", features = ["nightly"]}
 rand = {version = "0.8", default-features = false, features = ["std_rng"]}
