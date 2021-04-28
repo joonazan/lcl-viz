@@ -79,7 +79,7 @@ impl Component for Necklace {
         .enumerate()
         .map(|(i, f)| f(self.link.callback(move |_| SectionDone(i))));
 
-        html! {
+        html! { <>
             <div id="necklace" ref=self.container.clone()>
                 <h2>{"Pick two colors"}</h2>
                 <input type="color" value=COLOR1 oninput=self.link.callback(|input: InputData| ChangeColor("--color1", input.value))/>
@@ -89,6 +89,7 @@ impl Component for Necklace {
                 <Chain colors=vec![Some(false), Some(true), Some(false), Some(true), Some(false)] />
                 {for sections.take(self.section + 1)}
             </div>
-        }
+            <div id="footer"></div>
+        </> }
     }
 }
