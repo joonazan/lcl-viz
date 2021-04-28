@@ -23,10 +23,10 @@ impl Component for WithIds {
         false
     }
     fn view(&self) -> Html {
-        html! { <>
+        html! { <section>
             <h2>{"Ids"}</h2>
             <p>{"It turns out the beads have serial numbers. Maybe we can use that to our advantage!"}</p>
             <Chain colors=vec![None, None, None, None], numbers=Some(vec![34, 76, 2, 51])/>
-        </> }
+        </section> }
     }
 }

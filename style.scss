@@ -45,6 +45,15 @@ $cells-per-row: 25;
     box-sizing: border-box;
 }
 
+#necklace section {
+    animation: 0.3s ease-out fly-in;
+}
+
+@keyframes fly-in {
+    from {transform: translateY(100vh)}
+    to {}
+}
+
 #necklace .bead {
     border-radius: 50%;
     border: 1px solid black;
@@ -80,7 +89,6 @@ $cells-per-row: 25;
     transform: rotate(180deg);
     animation: 3s rotate;
     animation-timing-function: cubic-bezier(0.8, 0.1, 0.5, 0.0);
-    animation-delay: 1s;
     animation-fill-mode: both;
     width: min-content;
 }
