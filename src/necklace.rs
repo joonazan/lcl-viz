@@ -1,4 +1,6 @@
-use crate::utils::*;
+mod no_ids;
+mod utils;
+use utils::*;
 use web_sys::HtmlElement;
 use yew::prelude::*;
 
@@ -66,7 +68,7 @@ impl Component for Necklace {
 
     fn view(&self) -> Html {
         let sections: Vec<Html> =
-            vec![html! {<crate::no_ids::NoIds finished=self.link.callback(|_| SectionDone(0))/>}];
+            vec![html! {<no_ids::NoIds finished=self.link.callback(|_| SectionDone(0))/>}];
         html! {
             <div id="necklace" ref=self.container.clone()>
                 <h2>{"Pick two colors"}</h2>
