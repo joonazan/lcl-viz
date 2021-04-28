@@ -85,6 +85,11 @@ $cells-per-row: 25;
     padding: 0.5em 0.5em;
 }
 
+#necklace .tilt {
+    transform: rotate(7deg);
+    width: min-content;
+}
+
 #necklace .rotate {
     transform: rotate(180deg);
     animation: 3s rotate;

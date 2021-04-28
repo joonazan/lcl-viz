@@ -85,7 +85,7 @@ impl Component for NoIds {
         html! { <section>
             <h2>{"Independence"}</h2>
             <p>{"Each bead has to independently choose its color using the same reasoning. Let's look at a length four chain as an example."}</p>
-            <Chain colors=self.colors.clone() />
+            <div class="tilt"><Chain colors=self.colors.clone() /></div>
 
             {if nof_colored != 0 {
                 html!{<>
