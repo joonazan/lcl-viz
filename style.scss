@@ -39,6 +39,12 @@ $cells-per-row: 25;
 
 /* Necklace */
 
+#necklace {
+    max-width: 35em;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
 #necklace .bead {
     border-radius: 50%;
     border: 1px solid black;
