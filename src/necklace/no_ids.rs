@@ -14,14 +14,9 @@ pub enum Msg {
 }
 use Msg::*;
 
-#[derive(Properties, Clone)]
-pub struct Props {
-    pub finished: Callback<()>,
-}
-
 impl Component for NoIds {
     type Message = Msg;
-    type Properties = Props;
+    type Properties = SectionProps;
 
     fn create(p: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {

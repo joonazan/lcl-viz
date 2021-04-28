@@ -1,5 +1,6 @@
 mod no_ids;
 mod utils;
+mod with_ids;
 use utils::*;
 use web_sys::HtmlElement;
 use yew::prelude::*;
@@ -67,8 +68,17 @@ impl Component for Necklace {
     }
 
     fn view(&self) -> Html {
-        let sections: Vec<Html> =
-            vec![html! {<no_ids::NoIds finished=self.link.callback(|_| SectionDone(0))/>}];
+        fn s<T: Component<Properties = SectionProps>>() -> Box<dyn Fn(Callback<()>) -> Html> {
+            Box::new(|cb| html! {<T finished=cb/>})
+        }
+        let sections = vec![
+            s::<no_ids::NoIds>(),
+            s::<with_ids::WithIds>(),
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(i, f)| f(self.link.callback(move |_| SectionDone(i))));
+
         html! {
             <div id="necklace" ref=self.container.clone()>
                 <h2>{"Pick two colors"}</h2>
@@ -77,16 +87,7 @@ impl Component for Necklace {
                 <h2>{"Proper coloring"}</h2>
                 <p>{"Your job here is to color beads so that the chain doesn't have two identical colors next to each other. Below is an example of a proper coloring."}</p>
                 <Chain colors=vec![Some(false), Some(true), Some(false), Some(true), Some(false)] />
-                {for sections.into_iter().take(self.section + 1)}
-            {if self.section != 0 {
-                html!{<>
-                      <h2>{"Ids"}</h2>
-                      <p>{"It turns out the beads have serial numbers. Maybe we can use that to our advantage!"}</p>
-                      <Chain colors=vec![None, None, None, None], numbers=Some(vec![34, 76, 2, 51])/>
-                </>}
-            } else {
-                html!{}
-            }}
+                {for sections.take(self.section + 1)}
             </div>
         }
     }

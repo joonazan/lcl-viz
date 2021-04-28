@@ -1,5 +1,10 @@
 use yew::prelude::*;
 
+#[derive(Properties, Clone)]
+pub struct SectionProps {
+    pub finished: Callback<()>,
+}
+
 pub fn colorpick(cb: Callback<bool>) -> Html {
     html! { <>
         <button class="colorbutton" data-color="A" onclick=cb.reform(|_|false)/>{" or "}<button class="colorbutton" data-color="B" onclick=cb.reform(|_|true)/>{"?"}
