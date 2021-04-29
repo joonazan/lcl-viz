@@ -68,8 +68,8 @@ impl Component for Necklace {
     }
 
     fn view(&self) -> Html {
-        fn s<T: Component<Properties = SectionProps>>() -> Box<dyn Fn(Callback<()>) -> Html> {
-            Box::new(|cb| html! {<T finished=cb/>})
+        fn s<T: Component<Properties = SectionProps>>() -> fn(Callback<()>) -> Html {
+            |cb| html! {<T finished=cb/>}
         }
         let sections = vec![
             s::<no_ids::NoIds>(),
