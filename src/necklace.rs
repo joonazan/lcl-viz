@@ -90,6 +90,9 @@ impl Component for Necklace {
                 {for sections.take(self.section + 1)}
             </div>
             <div id="footer"></div>
+            {for (self.section + 1 .. nof_sections).map(|s| html!{
+                <a class="skip" onclick=self.link.callback(move |_| SectionDone(s-1))>{format!("Skip to section {}", s)}</a>
+            })}
         </> }
     }
 }

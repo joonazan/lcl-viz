@@ -111,3 +111,7 @@ $cells-per-row: 25;
 #necklace .edge:first-child, #necklace .edge:last-child {
     border-style: dashed;
 }
+
+.skip {
+    display: block;
+}
