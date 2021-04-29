@@ -6,9 +6,9 @@ pub struct SectionProps {
 }
 
 pub fn colorpick(cb: Callback<bool>) -> Html {
-    html! { <>
+    html! { <div class="choose-color">
         <button class="colorbutton" data-color="A" onclick=cb.reform(|_|false)/>{" or "}<button class="colorbutton" data-color="B" onclick=cb.reform(|_|true)/>{"?"}
-    </> }
+    </div> }
 }
 
 #[derive(Clone, Properties, PartialEq)]

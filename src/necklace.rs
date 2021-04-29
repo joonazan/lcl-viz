@@ -1,3 +1,4 @@
+mod neighborhoods;
 mod no_ids;
 mod utils;
 mod with_ids;
@@ -71,13 +72,16 @@ impl Component for Necklace {
         fn s<T: Component<Properties = SectionProps>>() -> fn(Callback<()>) -> Html {
             |cb| html! {<T finished=cb/>}
         }
-        let sections = vec![
+        let section_constructors = [
             s::<no_ids::NoIds>(),
             s::<with_ids::WithIds>(),
-        ]
-        .into_iter()
-        .enumerate()
-        .map(|(i, f)| f(self.link.callback(move |_| SectionDone(i))));
+            s::<neighborhoods::Neighborhoods>(),
+        ];
+        let nof_sections = section_constructors.len();
+        let sections = section_constructors
+            .iter()
+            .enumerate()
+            .map(|(i, f)| f(self.link.callback(move |_| SectionDone(i))));
 
         html! { <>
             <div id="necklace" ref=self.container.clone()>

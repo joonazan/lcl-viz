@@ -84,6 +84,27 @@ $cells-per-row: 25;
     display: flex;
     padding: 0.5em 0.5em;
 }
+#necklace *[data-vertical] .chain {
+    flex-direction: column;
+    margin: 0 auto;
+    width: min-content;
+}
+
+#necklace .edge {
+    margin: 1em 0;
+    width: 1em;
+    border: 1px solid black;
+}
+#necklace *[data-vertical] .edge {
+    margin: 0 1em;
+    width: 0em;
+    height: 1em;
+    border: 1px solid black;
+}
+
+#necklace .edge:first-child, #necklace .edge:last-child {
+    border-style: dashed;
+}
 
 #necklace .tilt {
     transform: rotate(7deg);
@@ -103,13 +124,8 @@ $cells-per-row: 25;
     to {transform: rotate(180deg);}
 }
 
-#necklace .edge {
-    margin: 1em 0;
-    width: 1em;
-    border: 1px solid black;
-}
-#necklace .edge:first-child, #necklace .edge:last-child {
-    border-style: dashed;
+#necklace .choose-color {
+    margin-left: 1em;
 }
 
 .skip {
