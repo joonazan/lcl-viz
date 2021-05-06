@@ -1,10 +1,11 @@
 use super::utils::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Element, HtmlElement};
+use web_sys::Element;
 use yew::prelude::*;
 use yew::services::{render::RenderTask, RenderService};
 
 pub struct Neighborhoods {
+    arrow_svg: NodeRef,
     vert_chain: NodeRef,
     hor_chains: NodeRef,
     arrows: Vec<NodeRef>,
@@ -22,6 +23,7 @@ impl Component for Neighborhoods {
     type Properties = SectionProps;
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
+            arrow_svg: NodeRef::default(),
             vert_chain: NodeRef::default(),
             hor_chains: NodeRef::default(),
             arrows: vec![
@@ -38,7 +40,9 @@ impl Component for Neighborhoods {
         match msg {
             Render => {
                 self.fix_arrows();
-                self._rendertask = Some(RenderService::request_animation_frame(self.link.callback(|_| Render)));
+                self._rendertask = Some(RenderService::request_animation_frame(
+                    self.link.callback(|_| Render),
+                ));
                 false
             }
         }
@@ -62,7 +66,7 @@ impl Component for Neighborhoods {
             <p>{"A network of computers can be coordinated by having each computer map its neighborhood \
                  and then decide what to do based on that."}</p>
             <div style="display:flex; position:relative">
-                 <svg class="svg-overlay">
+                 <svg ref=self.arrow_svg.clone() class="svg-overlay">
                     <defs>
                         <marker id="arrowhead" markerWidth="10" markerHeight="7"
                          refX="0" refY="3.5" orient="auto">
@@ -98,9 +102,18 @@ impl Component for Neighborhoods {
 
 impl Neighborhoods {
     fn fix_arrows(&self) {
-        fn attr(el: &Element, name: &str, value: i32) {
+        fn attr(el: &Element, name: &str, value: f64) {
             el.set_attribute(name, &format!("{}", value)).unwrap();
         }
+
+        let svg = self
+            .arrow_svg
+            .cast::<Element>()
+            .unwrap()
+            .get_bounding_client_rect();
+        let svg_x = svg.x();
+        let svg_y = svg.y();
+
         for i in 0..4 {
             let vb = self
                 .vert_chain
@@ -110,7 +123,8 @@ impl Neighborhoods {
                 .unwrap()
                 .get(i)
                 .unwrap()
-                .unchecked_into::<HtmlElement>();
+                .unchecked_into::<Element>()
+                .get_bounding_client_rect();
             let hc = self
                 .hor_chains
                 .cast::<Element>()
@@ -119,12 +133,13 @@ impl Neighborhoods {
                 .unwrap()
                 .get(i)
                 .unwrap()
-                .unchecked_into::<HtmlElement>();
+                .unchecked_into::<Element>()
+                .get_bounding_client_rect();
             let arrow = self.arrows[i as usize].cast::<Element>().unwrap();
-            attr(&arrow, "x1", vb.offset_left() + vb.offset_width() + 3);
-            attr(&arrow, "y1", vb.offset_top() + vb.offset_height() / 2);
-            attr(&arrow, "x2", hc.offset_left() - 12);
-            attr(&arrow, "y2", hc.offset_top() + hc.offset_height() / 2);
+            attr(&arrow, "x1", vb.right() + 3.0 - svg_x);
+            attr(&arrow, "y1", (vb.top() + vb.bottom()) / 2.0 - svg_y);
+            attr(&arrow, "x2", hc.left() - 12.0 - svg_x);
+            attr(&arrow, "y2", (hc.top() + hc.bottom()) / 2.0 - svg_y);
         }
     }
 }

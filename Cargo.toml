@@ -20,6 +20,7 @@ features = [
   'EventTarget',
   'HtmlElement',
   'NodeList',
+  'DomRect',
   'HtmlInputElement',
   'InputEvent',
   'MouseEvent',
