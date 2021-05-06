@@ -1,13 +1,13 @@
 use super::utils::*;
 use wasm_bindgen::JsCast;
-use web_sys::Element;
+use web_sys::{DomRect, Element};
 use yew::prelude::*;
 use yew::services::{render::RenderTask, RenderService};
 
 pub struct Neighborhoods {
     arrow_svg: NodeRef,
-    vert_chain: NodeRef,
-    hor_chains: NodeRef,
+    arrow_source: NodeRef,
+    arrow_targets: Vec<NodeRef>,
     arrows: Vec<NodeRef>,
     _rendertask: Option<RenderTask>,
     link: ComponentLink<Self>,
@@ -24,14 +24,9 @@ impl Component for Neighborhoods {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
             arrow_svg: NodeRef::default(),
-            vert_chain: NodeRef::default(),
-            hor_chains: NodeRef::default(),
-            arrows: vec![
-                NodeRef::default(),
-                NodeRef::default(),
-                NodeRef::default(),
-                NodeRef::default(),
-            ],
+            arrow_source: NodeRef::default(),
+            arrow_targets: (0..4).map(|_| NodeRef::default()).collect(),
+            arrows: (0..4).map(|_| NodeRef::default()).collect(),
             _rendertask: None,
             link,
         }
@@ -69,14 +64,17 @@ impl Component for Neighborhoods {
                  <svg ref=self.arrow_svg.clone() class="svg-overlay">
                     <defs>
                         <marker id="arrowhead" markerWidth="10" markerHeight="7"
-                         refX="0" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" style="fill:#666"/>
+                         refX="7" refY="3" orient="auto">
+                            <polygon points="0 0, 7 3, 0 6" style="fill:#666"/>
                         </marker>
                     </defs>
                     {for arrows}
                  </svg>
-                 <Chain ref=self.vert_chain.clone() vertical=true colors=colors.clone()/>
-                 <div ref=self.hor_chains.clone()>{for (0..4).map(|i| neighborhood(&colors, i, 1))}</div>
+                 <div ref=self.arrow_targets[0].clone()>{neighborhood(&colors, 0, 1, true)}</div>
+                 <div ref=self.arrow_targets[3].clone() style="transform: rotate(180deg)">{neighborhood(&colors, 0, 1, true)}</div>
+                 <div style="margin: 2em 2em"><Chain ref=self.arrow_source.clone() vertical=true colors=colors.clone()/></div>
+                 <div ref=self.arrow_targets[1].clone()>{neighborhood(&colors, 1, 1, true)}</div>
+                 <div ref=self.arrow_targets[2].clone() style="transform: rotate(180deg)">{neighborhood(&colors, 1, 1, true)}</div>
             </div>
             <p>{"Above: what each computer sees after mapping its distance-1 neighborhood."}</p>
 
@@ -116,7 +114,7 @@ impl Neighborhoods {
 
         for i in 0..4 {
             let vb = self
-                .vert_chain
+                .arrow_source
                 .cast::<Element>()
                 .unwrap()
                 .query_selector_all(".bead")
@@ -125,21 +123,40 @@ impl Neighborhoods {
                 .unwrap()
                 .unchecked_into::<Element>()
                 .get_bounding_client_rect();
-            let hc = self
-                .hor_chains
+            let b2 = self.arrow_targets[i as usize]
                 .cast::<Element>()
                 .unwrap()
-                .query_selector_all(".chain")
+                .query_selector(".highlight")
                 .unwrap()
-                .get(i)
                 .unwrap()
-                .unchecked_into::<Element>()
                 .get_bounding_client_rect();
             let arrow = self.arrows[i as usize].cast::<Element>().unwrap();
-            attr(&arrow, "x1", vb.right() + 3.0 - svg_x);
-            attr(&arrow, "y1", (vb.top() + vb.bottom()) / 2.0 - svg_y);
-            attr(&arrow, "x2", hc.left() - 12.0 - svg_x);
-            attr(&arrow, "y2", (hc.top() + hc.bottom()) / 2.0 - svg_y);
+
+            fn one_end(el: DomRect) -> (f64, f64, f64) {
+                let h = el.height();
+                let w = el.width();
+                let y = el.top() + h / 2.0;
+                let x = el.left() + w / 2.0;
+                (x, y, (w + h) * 0.3)
+            }
+
+            let (x, y, r) = one_end(vb);
+            let (x2, y2, r2) = one_end(b2);
+            let dx = x2 - x;
+            let dy = y2 - y;
+            let l = (dx * dx + dy * dy).sqrt();
+            let dx = dx / l;
+            let dy = dy / l;
+
+            let x = x + r * dx;
+            let y = y + r * dy;
+            let x2 = x2 - r2 * dx;
+            let y2 = y2 - r2 * dy;
+
+            attr(&arrow, "x1", x - svg_x);
+            attr(&arrow, "y1", y - svg_y);
+            attr(&arrow, "x2", x2 - svg_x);
+            attr(&arrow, "y2", y2 - svg_y);
         }
     }
 }
@@ -208,13 +225,13 @@ impl Component for NeighborhoodExplorer {
             </div>
             <div>
                 <h3>{"Distance-"}{distancedropdown}{" Neighborhood"}</h3>
-                {neighborhood(&chain, self.selected, self.distance)}
+                {neighborhood(&chain, self.selected, self.distance, false)}
             </div>
         </div>}
     }
 }
 
-fn neighborhood(chain: &[Option<bool>], selected: usize, distance: usize) -> Html {
+fn neighborhood(chain: &[Option<bool>], selected: usize, distance: usize, vert: bool) -> Html {
     let open_start = selected > distance;
     let start = if open_start { selected - distance } else { 0 };
 
@@ -224,5 +241,5 @@ fn neighborhood(chain: &[Option<bool>], selected: usize, distance: usize) -> Htm
     } else {
         chain.len()
     };
-    html! {<Chain colors=chain[start..end].to_owned() open_start=open_start open_end=open_end highlight=Some(selected - start) />}
+    html! {<Chain vertical=vert colors=chain[start..end].to_owned() open_start=open_start open_end=open_end highlight=Some(selected - start) />}
 }
