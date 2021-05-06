@@ -9,12 +9,14 @@ pub struct Neighborhoods {
     arrow_source: NodeRef,
     arrow_targets: Vec<NodeRef>,
     arrows: Vec<NodeRef>,
+    show_duplicates: bool,
     _rendertask: Option<RenderTask>,
     link: ComponentLink<Self>,
 }
 
 pub enum Msg {
     Render,
+    ToggleDuplicates,
 }
 use Msg::*;
 
@@ -27,6 +29,7 @@ impl Component for Neighborhoods {
             arrow_source: NodeRef::default(),
             arrow_targets: (0..4).map(|_| NodeRef::default()).collect(),
             arrows: (0..4).map(|_| NodeRef::default()).collect(),
+            show_duplicates: true,
             _rendertask: None,
             link,
         }
@@ -39,6 +42,10 @@ impl Component for Neighborhoods {
                     self.link.callback(|_| Render),
                 ));
                 false
+            }
+            ToggleDuplicates => {
+                self.show_duplicates = !self.show_duplicates;
+                true
             }
         }
     }
@@ -60,23 +67,27 @@ impl Component for Neighborhoods {
             <h2>{"Ambiguity"}</h2>
             <p>{"A network of computers can be coordinated by having each computer map its neighborhood \
                  and then decide what to do based on that."}</p>
-            <div style="display:flex; position:relative">
+            <div style="display:flex; position:relative; justify-content:center">
                  <svg ref=self.arrow_svg.clone() class="svg-overlay">
                     <defs>
                         <marker id="arrowhead" markerWidth="10" markerHeight="7"
-                         refX="7" refY="3" orient="auto">
+                         refX="6" refY="3" orient="auto">
                             <polygon points="0 0, 7 3, 0 6" style="fill:#666"/>
                         </marker>
                     </defs>
                     {for arrows}
                  </svg>
-                 <div ref=self.arrow_targets[0].clone()>{neighborhood(&colors, 0, 1, true)}</div>
-                 <div ref=self.arrow_targets[3].clone() style="transform: rotate(180deg)">{neighborhood(&colors, 0, 1, true)}</div>
+                 <input type="checkbox" checked=self.show_duplicates id="show-ambiguous" />
+                 <div ref=self.arrow_targets[0].clone() class="ambiguous1">{neighborhood(&colors, 0, 1, true)}</div>
+                 <div ref=self.arrow_targets[3].clone() class="ambiguous2b">{neighborhood(&colors, 0, 1, true)}</div>
                  <div style="margin: 2em 2em"><Chain ref=self.arrow_source.clone() vertical=true colors=colors.clone()/></div>
-                 <div ref=self.arrow_targets[1].clone()>{neighborhood(&colors, 1, 1, true)}</div>
-                 <div ref=self.arrow_targets[2].clone() style="transform: rotate(180deg)">{neighborhood(&colors, 1, 1, true)}</div>
+                 <div ref=self.arrow_targets[1].clone() class="ambiguous1">{neighborhood(&colors, 1, 1, true)}</div>
+                 <div ref=self.arrow_targets[2].clone() class="ambiguous2">{neighborhood(&colors, 1, 1, true)}</div>
             </div>
-            <p>{"Above: what each computer sees after mapping its distance-1 neighborhood."}</p>
+            <p>
+                 {"Above: what each computer sees after mapping its distance-1 neighborhood. "}
+                 <button onclick=self.link.callback(|_| ToggleDuplicates)>{if self.show_duplicates{"Merge duplicates"}else{"Show duplicates"}}</button>
+            </p>
 
             <p>{"Suppose you want to color nodes so that two colors alternate. Below is an example of a proper coloring."}</p>
             <Chain colors=vec![Some(false), Some(true), Some(false), Some(true), Some(false)] />
