@@ -22,6 +22,8 @@ pub struct Chain {
     pub open_end: bool,
     #[prop_or_default]
     pub highlight: Option<usize>,
+    #[prop_or_default]
+    pub nodeclick: Callback<usize>,
 }
 
 impl Component for Chain {
@@ -55,10 +57,12 @@ impl Component for Chain {
                 "".into()
             };
 
+            let oc = self.nodeclick.reform(move |_| i);
+
             if let Some(c) = color {
-                html! {<div class=class data-color=if *c {"B"} else {"A"}>{content}</div>}
+                html! {<div class=class onclick=oc data-color=if *c {"B"} else {"A"}>{content}</div>}
             } else {
-                html! {<div class=class>{content}</div>}
+                html! {<div class=class onclick=oc>{content}</div>}
             }
         });
 

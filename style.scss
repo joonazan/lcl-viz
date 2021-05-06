@@ -128,6 +128,17 @@ $cells-per-row: 25;
     margin-left: 1em;
 }
 
+.side-by-side {
+    display: flex;
+    justify-content: space-between;
+}
+
+.svg-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 .skip {
     display: block;
 }

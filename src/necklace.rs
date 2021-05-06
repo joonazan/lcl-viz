@@ -1,5 +1,4 @@
 mod neighborhoods;
-mod no_ids;
 mod utils;
 mod with_ids;
 use utils::*;
@@ -72,11 +71,7 @@ impl Component for Necklace {
         fn s<T: Component<Properties = SectionProps>>() -> fn(Callback<()>) -> Html {
             |cb| html! {<T finished=cb/>}
         }
-        let section_constructors = [
-            s::<no_ids::NoIds>(),
-            s::<with_ids::WithIds>(),
-            s::<neighborhoods::Neighborhoods>(),
-        ];
+        let section_constructors = [s::<neighborhoods::Neighborhoods>()];
         let nof_sections = section_constructors.len();
         let sections = section_constructors
             .iter()
@@ -85,12 +80,9 @@ impl Component for Necklace {
 
         html! { <>
             <div id="necklace" ref=self.container.clone()>
-                <h2>{"Pick two colors"}</h2>
+                <p>{"Pick two of your favourite colors!"}</p>
                 <input type="color" value=COLOR1 oninput=self.link.callback(|input: InputData| ChangeColor("--color1", input.value))/>
                 <input type="color" value=COLOR2 oninput=self.link.callback(|input: InputData| ChangeColor("--color2", input.value))/>
-                <h2>{"Proper coloring"}</h2>
-                <p>{"Your job here is to color beads so that the chain doesn't have two identical colors next to each other. Below is an example of a proper coloring."}</p>
-                <Chain colors=vec![Some(false), Some(true), Some(false), Some(true), Some(false)] />
                 {for sections.take(self.section + 1)}
             </div>
             <div id="footer"></div>
