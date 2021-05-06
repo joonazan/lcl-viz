@@ -132,6 +132,13 @@ $cells-per-row: 25;
     justify-content: space-between;
 }
 
+#ambiguity-pic {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    overflow: hidden;
+}
+
 .svg-overlay {
     position: absolute;
     width: 100%;

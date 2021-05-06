@@ -67,7 +67,7 @@ impl Component for Neighborhoods {
             <h2>{"Ambiguity"}</h2>
             <p>{"A network of computers can be coordinated by having each computer map its neighborhood \
                  and then decide what to do based on that."}</p>
-            <div style="display:flex; position:relative; justify-content:center">
+            <div id="ambiguity-pic">
                  <svg ref=self.arrow_svg.clone() class="svg-overlay">
                     <defs>
                         <marker id="arrowhead" markerWidth="10" markerHeight="7"
