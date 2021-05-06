@@ -84,9 +84,8 @@ $cells-per-row: 25;
     display: flex;
     padding: 0.5em 0.5em;
 }
-#necklace *[data-vertical] .chain {
+#necklace .chain.vertical {
     flex-direction: column;
-    margin: 0 auto;
     width: min-content;
 }
 
@@ -95,7 +94,7 @@ $cells-per-row: 25;
     width: 1em;
     border: 1px solid black;
 }
-#necklace *[data-vertical] .edge {
+#necklace .vertical .edge {
     margin: 0 1em;
     width: 0em;
     height: 1em;

@@ -75,7 +75,7 @@ impl Component for Neighborhoods {
                     </defs>
                     {for arrows}
                  </svg>
-                 <div data-vertical="yes" ref=self.vert_chain.clone() style="margin-right: 3em"><Chain colors=colors.clone()/></div>
+                 <Chain ref=self.vert_chain.clone() vertical=true colors=colors.clone()/>
                  <div ref=self.hor_chains.clone()>{for (0..4).map(|i| neighborhood(&colors, i, 1))}</div>
             </div>
             <p>{"Above: what each computer sees after mapping its distance-1 neighborhood."}</p>

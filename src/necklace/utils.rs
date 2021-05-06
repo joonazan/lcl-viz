@@ -24,6 +24,8 @@ pub struct Chain {
     pub highlight: Option<usize>,
     #[prop_or_default]
     pub nodeclick: Callback<usize>,
+    #[prop_or_default]
+    pub vertical: bool,
 }
 
 impl Component for Chain {
@@ -81,7 +83,7 @@ impl Component for Chain {
         });
 
         html! {
-            <div class="chain">
+            <div class={"chain".to_string() + if self.vertical {" vertical"} else {""}}>
                 {for chain}
             </div>
         }
